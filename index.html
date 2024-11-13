@@ -64,27 +64,32 @@
             text-shadow: 0 0 10px #00bcd4;
         }
 
+        /* Updated question styling for better visibility */
         .question {
+            font-size: 1.2rem; /* Slightly larger text */
             font-weight: bold;
-            color: #dcdcdc;
-            margin-bottom: 10px;
+            color: #00bcd4; /* Teal color for better contrast */
+            margin-bottom: 15px;
+            text-shadow: 0 0 8px #00bcd4; /* Subtle glowing effect */
         }
 
+        /* Wrapper for each code block */
+        .code-wrapper {
+            position: relative; /* This allows positioning of the button inside the code block */
+            margin-bottom: 20px; /* Space between code blocks */
+        }
+
+        /* Preformatted code block itself */
         pre {
             background-color: #333;
             padding: 15px;
             border-radius: 8px;
             overflow-x: auto;
             border: 1px solid #444;
+            position: relative; /* This allows absolute positioning of the button inside */
         }
 
-        code {
-            color: #dcdcdc;
-            display: block;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-        }
-
+        /* Copy button inside the code block */
         .copy-btn {
             background-color: #444;
             color: #dcdcdc;
@@ -93,28 +98,36 @@
             border-radius: 5px;
             cursor: pointer;
             font-size: 14px;
-            margin-top: 10px;
+            position: absolute; /* Absolute positioning inside the code block */
+            top: 10px; /* Position from the top */
+            right: 10px; /* Position from the right */
             transition: background-color 0.3s ease;
+            z-index: 1; /* Ensure the button is above the code */
         }
 
+        /* Hover effect for the copy button */
         .copy-btn:hover {
             background-color: #00bcd4; /* Teal */
         }
 
+        /* Focus state for the copy button */
         .copy-btn:focus {
             outline: none;
         }
 
+        /* Active state for the copy button */
         .copy-btn:active {
             background-color: #0097a7; /* Darker teal */
         }
 
+        /* Button shows a check mark when copied */
         .copy-btn:after {
             content: ' ✔';
             color: #0f0;
             display: none;
         }
 
+        /* Show check mark when copied */
         .copy-btn.copied:after {
             display: inline;
         }
@@ -185,8 +198,10 @@
                 const programHTML = `
                     <div class="program-container">
                         <div class="question">${program.question}</div>
-                        <pre><code id="code${subject}${index + 1}">${program.code}</code></pre>
-                        <button class="copy-btn" onclick="copyCode('code${subject}${index + 1}')">Copy Code</button>
+                        <div class="code-wrapper">
+                            <pre><code id="code${subject}${index + 1}">${program.code}</code></pre>
+                            <button class="copy-btn" onclick="copyCode('code${subject}${index + 1}')">Copy Code</button>
+                        </div>
                     </div>
                 `;
                 section.innerHTML += programHTML; // Append the program to the section
