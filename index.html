@@ -29,7 +29,7 @@
         .controls button {
             padding: 10px 20px;
             font-size: 16px;
-            background-color: #f5a623;
+            background-color: #00bcd4; /* Teal */
             color: #1e1e1e;
             border: none;
             border-radius: 5px;
@@ -38,7 +38,7 @@
         }
 
         .controls button:hover {
-            background-color: #d88e1f;
+            background-color: #0097a7; /* Darker teal */
         }
 
         /* Section Styling */
@@ -60,8 +60,8 @@
         .section-title {
             font-size: 2rem;
             margin: 20px 0;
-            color: #f5a623;
-            text-shadow: 0 0 10px #f5a623;
+            color: #00bcd4; /* Teal */
+            text-shadow: 0 0 10px #00bcd4;
         }
 
         .question {
@@ -98,7 +98,7 @@
         }
 
         .copy-btn:hover {
-            background-color: #f5a623;
+            background-color: #00bcd4; /* Teal */
         }
 
         .copy-btn:focus {
@@ -106,7 +106,7 @@
         }
 
         .copy-btn:active {
-            background-color: #e38e2a;
+            background-color: #0097a7; /* Darker teal */
         }
 
         .copy-btn:after {
@@ -193,10 +193,74 @@
             });
         }
 
-        // Default section to show (DSP) and load the programs
-        showSection('DSP');
-        loadPrograms('DSP'); // Load DSP programs by default
+        // Define the sections to cycle through
+        const sectionIds = ['DSP', 'DC'];
+        let currentSectionIndex = 0; // Start with DSP section
 
+        // Function to go to the next section
+        function goToNextSection() {
+            currentSectionIndex = (currentSectionIndex + 1) % sectionIds.length; // Loop to the first section after the last
+            showSection(sectionIds[currentSectionIndex]);
+        }
+
+        // Function to go to the previous section
+        function goToPreviousSection() {
+            currentSectionIndex = (currentSectionIndex - 1 + sectionIds.length) % sectionIds.length; // Loop to the last section before the first
+            showSection(sectionIds[currentSectionIndex]);
+        }
+
+        // Event listener for keydown events to listen for arrow keys and 'A/a', 'D/d'
+        document.addEventListener('keydown', function(event) {
+            // Right arrow key (→) or 'D'/'d' to go to next section
+            if (event.key === 'd' || event.key === 'D' || event.key === 'ArrowRight') {
+                goToNextSection();
+            } 
+            // Left arrow key (←) or 'A'/'a' to go to previous section
+            else if (event.key === 'a' || event.key === 'A' || event.key === 'ArrowLeft') {
+                goToPreviousSection();
+            }
+        });
+
+        // Variables to track touch starting points
+        let startX = 0;
+        let startY = 0;
+
+        // Start touch event
+        document.addEventListener('touchstart', function(event) {
+            startX = event.touches[0].clientX;
+            startY = event.touches[0].clientY;
+        });
+
+        // End touch event
+        document.addEventListener('touchend', function(event) {
+            if (!startX || !startY) {
+                return;
+            }
+
+            let endX = event.changedTouches[0].clientX;
+            let endY = event.changedTouches[0].clientY;
+
+            let diffX = endX - startX;
+            let diffY = endY - startY;
+
+            // Horizontal swipe detection
+            if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) { // 50px threshold for swipe
+                if (diffX > 0) {
+                    goToPreviousSection();
+                } else {
+                    goToNextSection();
+                }
+            }
+
+            // Reset starting positions
+            startX = 0;
+            startY = 0;
+        });
+
+        // Initialize with DSP section and load programs
+        showSection('DSP');
+        loadPrograms('DSP'); 
+        loadPrograms('DC');
         // Load the programs when the section is switched
         document.querySelectorAll('.controls button').forEach(button => {
             button.addEventListener('click', (e) => {
@@ -204,7 +268,6 @@
                 loadPrograms(subject); // Load programs based on the selected subject
             });
         });
-
     </script>
 
 </body>
