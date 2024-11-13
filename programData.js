@@ -180,7 +180,103 @@ title('Information after Receiving');
 axis([0 11 0 1.5]), grid on;
 `
             },
-                    
+            {
+                header: "Prg 7",
+                question: "DC Program Question Placeholder",
+                code: 
+`M = 16;               % Modulation order
+k = log2(M);           % Number of bits per symbol
+n = 30000;             % Number of symbols per frame
+sps = 1;               % Number of samples per symbol
+
+% Use default random number generator
+rng default
+
+% Generate vector of binary data
+dataIn = randi([0 1],n*k,1);
+
+% Plot random bits
+stem(dataIn(1:40), 'filled');
+title('Random Bits');
+xlabel('Bit Index');
+ylabel('Binary Value');
+
+% Convert binary data to integer symbols
+dataSymbolsIn = bit2int(dataIn,k);
+
+% Plot random symbols
+figure;
+stem(dataSymbolsIn(1:10));
+title('Random Symbols');
+xlabel('Symbol Index');
+ylabel('Integer Value');
+
+% Binary-encoded QAM modulation
+dataMod = qammod(dataSymbolsIn, M,'bin');
+
+% Gray-encoded QAM modulation
+dataModG = qammod(dataSymbolsIn, M);
+
+% Set Eb/No
+EbNo = 10;
+
+% Convert Eb/No to SNR
+snr = convertSNR(EbNo, 'ebno', samplespersymbol=sps, bitspersymbol=k);
+
+% Add AWGN noise to the modulated signals
+receivedSignal = awgn(dataMod, snr, 'measured');
+receivedSignalG = awgn(dataModG, snr, 'measured');
+
+% Plot the constellation diagrams
+sPlotFig = scatterplot(receivedSignal,1,0,'g.');
+hold on
+scatterplot(dataMod,1,0,'k*',sPlotFig)
+
+% Binary-encoded QAM demodulation
+dataSymbolsOut = qamdemod(receivedSignal,M,'bin');
+
+% Gray-coded QAM demodulation
+dataSymbolsOutG = qamdemod(receivedSignalG,M);
+
+% Convert integer symbols back to binary data
+dataOut = int2bit(dataSymbolsOut,k);
+dataOutG = int2bit(dataSymbolsOutG,k);
+
+% Calculate bit error rate for binary-coded QAM
+[numErrors,ber] = biterr(dataIn,dataOut);
+fprintf('\nThe binary coding bit error rate is %5.2e, based on %d errors.\n', ber,numErrors)
+
+% Calculate bit error rate for Gray-coded QAM
+[numErrorsG,berG] = biterr(dataIn, dataOutG);
+fprintf('\nThe Gray coding bit error rate is %5.2e, based on %d errors.\n', berG,numErrorsG)
+
+% Modulation order
+M = 16;
+
+% Integer input
+x = (0:15);
+
+% 16-QAM output (binary-coded)
+symbin = qammod(x,M,'bin');
+
+% 16-QAM output (Gray-coded)
+symgray = qammod(x,M,'gray');
+
+% Plot constellation diagram for Gray-coded QAM
+scatterplot(symgray,1,0,'b*');
+
+% Add labels to the constellation points
+for k = 1:M
+    text(real(symgray(k))-0.0,imag(symgray(k))+0.3,dec2base(x(k),2,4), 'Color',[0 1 0]);
+    text(real(symgray(k))-0.5,imag(symgray(k))+0.3,num2str(x(k)), 'Color',[0 1 0]);
+    text(real(symbin(k))-0.0,imag(symbin(k))-0.3,dec2base(x(k),2,4), 'Color',[1 0 0]);
+    text(real(symbin(k))-0.5,imag(symbin(k))-0.3,num2str(x(k)), 'Color',[1 0 0]);
+end
+
+% Set plot title and axis limits
+title('16-QAM Symbol Mapping')
+axis([-4 4 -4 4])`
+            },        
             // Additional DC programs can be added here
             /*
             {
