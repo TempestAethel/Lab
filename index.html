@@ -261,13 +261,6 @@
         showSection('DSP');
         loadPrograms('DSP'); 
         loadPrograms('DC');
-        // Load the programs when the section is switched
-        document.querySelectorAll('.controls button').forEach(button => {
-            button.addEventListener('click', (e) => {
-                const subject = e.target.textContent.split(' ')[0]; // Get the subject name (e.g., 'DSP' or 'DC')
-                loadPrograms(subject); // Load programs based on the selected subject
-            });
-        });
     </script>
 
 </body>
