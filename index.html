@@ -13,20 +13,55 @@
             margin: 0;
             padding: 0;
             line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            overflow-y: auto;
         }
 
-        .program-container {
-            margin: 20px auto;
-            padding: 20px;
+        .controls {
+            margin: 20px;
+            text-align: center;
+        }
+
+        .controls button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #f5a623;
+            color: #1e1e1e;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .controls button:hover {
+            background-color: #d88e1f;
+        }
+
+        /* Section Styling */
+        .section {
+            display: none;
             background-color: #2c2c2c;
             border-radius: 8px;
+            padding: 20px;
+            width: 90%;
             max-width: 800px;
+            margin: 20px 0;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
         }
 
-        .program-header {
-            font-size: 1.8em;
-            margin-bottom: 10px;
+        .section.active {
+            display: block;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            margin: 20px 0;
             color: #f5a623;
+            text-shadow: 0 0 10px #f5a623;
         }
 
         .question {
@@ -83,58 +118,43 @@
         .copy-btn.copied:after {
             display: inline;
         }
-
-        .subject-selection {
-            margin: 20px;
-            text-align: center;
-        }
-
-        select {
-            padding: 8px;
-            font-size: 16px;
-            background-color: #333;
-            color: #fff;
-            border: 1px solid #444;
-            border-radius: 5px;
-        }
     </style>
 </head>
 <body>
 
-    <div class="subject-selection">
-        <label for="subject">Select Subject: </label>
-        <select id="subject" onchange="loadPrograms()">
-            <option value="DSP">DSP (Digital Signal Processing)</option>
-            <option value="DC">DC (Digital Communication)</option>
-        </select>
+    <!-- Controls to switch between sections -->
+    <div class="controls">
+        <button onclick="showSection('dsp')">DSP (Digital Signal Processing)</button>
+        <button onclick="showSection('dc')">DC (Digital Communication)</button>
     </div>
 
-    <div id="programs-container"></div>
+    <!-- DSP Section -->
+    <div id="dsp" class="section">
+        <div class="section-title">DSP (Digital Signal Processing)</div>
+        <!-- DSP Programs will be dynamically loaded here -->
+    </div>
 
-    <!-- Include programData.js first -->
+    <!-- DC Section -->
+    <div id="dc" class="section">
+        <div class="section-title">DC (Digital Communication)</div>
+        <!-- DC Programs will be dynamically loaded here -->
+    </div>
+
+    <!-- JavaScript for section handling and program data loading -->
     <script src="programData.js"></script>
-
     <script>
-        function loadPrograms() {
-            const subject = document.getElementById('subject').value;
-            const programsContainer = document.getElementById('programs-container');
-            programsContainer.innerHTML = ''; // Clear previous content
-
-            const programs = programData.subjects[subject];
-
-            programs.forEach((program, index) => {
-                const programHTML = `
-                    <div class="program-container">
-                        <div class="program-header">${program.header}</div>
-                        <div class="question">${program.question}</div>
-                        <pre><code id="code${subject}${index + 1}">${program.code}</code></pre>
-                        <button class="copy-btn" onclick="copyCode('code${subject}${index + 1}')">Copy Code</button>
-                    </div>
-                `;
-                programsContainer.innerHTML += programHTML; // Append the program to the container
-            });
+        // Function to show the selected section
+        function showSection(sectionId) {
+            // Hide all sections
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(section => section.classList.remove('active'));
+            
+            // Show the selected section
+            const sectionToShow = document.getElementById(sectionId);
+            sectionToShow.classList.add('active');
         }
 
+        // Function to copy code to clipboard
         function copyCode(codeId) {
             var copyText = document.getElementById(codeId);
             var range = document.createRange();
@@ -153,7 +173,39 @@
             alert("Code copied to clipboard!");
         }
 
-        window.onload = loadPrograms;
+        // Function to load programs based on subject
+        function loadPrograms(subject) {
+            const section = document.getElementById(subject);
+            const programs = programData.subjects[subject];
+
+            // Clear previous programs
+            section.innerHTML = `<div class="section-title">${subject}</div>`;
+
+            programs.forEach((program, index) => {
+                const programHTML = `
+                    <div class="program-container">
+                        <div class="question">${program.question}</div>
+                        <pre><code id="code${subject}${index + 1}">${program.code}</code></pre>
+                        <button class="copy-btn" onclick="copyCode('code${subject}${index + 1}')">Copy Code</button>
+                    </div>
+                `;
+                section.innerHTML += programHTML; // Append the program to the section
+            });
+        }
+
+        // Default section to show (DSP) and load the programs
+        showSection('dsp');
+        loadPrograms('DSP'); // Load DSP programs by default
+
+        // Load the programs when the section is switched
+        document.querySelectorAll('.controls button').forEach(button => {
+            button.addEventListener('click', (e) => {
+                const subject = e.target.textContent.split(' ')[0]; // Get the subject name (e.g., 'DSP' or 'DC')
+                loadPrograms(subject); // Load programs based on the selected subject
+            });
+        });
+
     </script>
+
 </body>
 </html>
