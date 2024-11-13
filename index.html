@@ -124,18 +124,18 @@
 
     <!-- Controls to switch between sections -->
     <div class="controls">
-        <button onclick="showSection('dsp')">DSP (Digital Signal Processing)</button>
-        <button onclick="showSection('dc')">DC (Digital Communication)</button>
+        <button onclick="showSection('DSP')">DSP (Digital Signal Processing)</button>
+        <button onclick="showSection('DC')">DC (Digital Communication)</button>
     </div>
 
     <!-- DSP Section -->
-    <div id="dsp" class="section">
+    <div id="DSP" class="section">
         <div class="section-title">DSP (Digital Signal Processing)</div>
         <!-- DSP Programs will be dynamically loaded here -->
     </div>
 
     <!-- DC Section -->
-    <div id="dc" class="section">
+    <div id="DC" class="section">
         <div class="section-title">DC (Digital Communication)</div>
         <!-- DC Programs will be dynamically loaded here -->
     </div>
@@ -194,7 +194,7 @@
         }
 
         // Default section to show (DSP) and load the programs
-        showSection('dsp');
+        showSection('DSP');
         loadPrograms('DSP'); // Load DSP programs by default
 
         // Load the programs when the section is switched
