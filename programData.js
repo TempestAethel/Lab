@@ -4,14 +4,15 @@ const programData = {
             {
                 header: "DSP Program Placeholder",
                 question: "DSP Program Question Placeholder",
-                code: "% DSP Program Code Placeholder"
+                code: `% DSP Program Code Placeholder`
             },
             // Additional DSP programs can be added here
             /*
             {
                 header: "Additional DSP Program Placeholder",
                 question: "Additional DSP Program Question Placeholder",
-                code: "% Additional DSP Program Code Placeholder"
+                code: 
+`% Additional DSP Program Code Placeholder`
             },
             */
         ],
@@ -20,7 +21,7 @@ const programData = {
                 header: "Prg 4:Gram-Schmidt Orthogonalization",
                 question: "To find orthogonal basis vectors for the given set of vectors and plot the orthonormal vectors.",
                 code: 
-"clc; close all; clear all;
+`clc; close all; clear all;
 
 % Define the set of input vectors (3x3 matrix, each column is a vector)
 V = [1 1 0; 1 0 1; 0 1 1]'; % Linearly Independent vectors
@@ -86,16 +87,14 @@ legend({'V1', 'V2', 'V3', 'E1', 'E2', 'E3'}, 'Location', 'Best'); % Legend
 axis equal;
 
 % Release the plot hold so further plotting won't affect this figure
-hold off;
-
-"
+hold off;`
             },
 
                 {
                 header: "Prg 5:QPSK",
                 question: "Modulation and Demodulation oF Quadrature Phase Shift Keying",
                 code: 
-                    "clc;
+`clc;
 clear all;
 close all;
 
@@ -179,7 +178,7 @@ figure(3)
 stem(Rx_data, 'linewidth', 3);
 title('Information after Receiving');
 axis([0 11 0 1.5]), grid on;
-"
+`
             },
                     
             // Additional DC programs can be added here
@@ -187,7 +186,8 @@ axis([0 11 0 1.5]), grid on;
             {
                 header: "Additional DC Program Placeholder",
                 question: "Additional DC Program Question Placeholder",
-                code: "% Additional DC Program Code Placeholder"
+                code: 
+`% Additional DC Program Code Placeholder`
             },
             */
         ],
@@ -198,13 +198,15 @@ axis([0 11 0 1.5]), grid on;
             {
                 header: "Another Subject Program Placeholder",
                 question: "Another Subject Program Question Placeholder",
-                code: "% Another Subject Program Code Placeholder"
+                code: 
+`% Another Subject Program Code Placeholder`
             },
             // Additional programs for AnotherSubject can be added here
             {
                 header: "Additional AnotherSubject Program Placeholder",
                 question: "Additional AnotherSubject Program Question Placeholder",
-                code: "% Additional AnotherSubject Program Code Placeholder"
+                code: 
+`% Additional AnotherSubject Program Code Placeholder`
             }
         ]
         */
