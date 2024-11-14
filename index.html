@@ -71,12 +71,14 @@
             color: #00bcd4; /* Teal color for better contrast */
             margin-bottom: 15px;
             text-shadow: 0 0 8px #00bcd4; /* Subtle glowing effect */
+            cursor: pointer;
         }
 
         /* Wrapper for each code block */
         .code-wrapper {
             position: relative; /* This allows positioning of the button inside the code block */
-            margin-bottom: 20px; /* Space between code blocks */
+            display: none; /* Hide code initially */
+            margin-top: 15px;
         }
 
         /* Preformatted code block itself */
@@ -197,8 +199,8 @@
             programs.forEach((program, index) => {
                 const programHTML = `
                     <div class="program-container">
-                        <div class="question">${program.question}</div>
-                        <div class="code-wrapper">
+                        <div class="question" onclick="toggleCode('codeWrapper${subject}${index + 1}')">${program.question}</div>
+                        <div class="code-wrapper" id="codeWrapper${subject}${index + 1}">
                             <pre><code id="code${subject}${index + 1}">${program.code}</code></pre>
                             <button class="copy-btn" onclick="copyCode('code${subject}${index + 1}')">Copy Code</button>
                         </div>
@@ -208,73 +210,15 @@
             });
         }
 
-        // Define the sections to cycle through
-        const sectionIds = ['DSP', 'DC'];
-        let currentSectionIndex = 0; // Start with DSP section
-
-        // Function to go to the next section
-        function goToNextSection() {
-            currentSectionIndex = (currentSectionIndex + 1) % sectionIds.length; // Loop to the first section after the last
-            showSection(sectionIds[currentSectionIndex]);
+        // Toggle visibility of code for a specific program
+        function toggleCode(codeWrapperId) {
+            const codeWrapper = document.getElementById(codeWrapperId);
+            codeWrapper.style.display = codeWrapper.style.display === 'block' ? 'none' : 'block';
         }
-
-        // Function to go to the previous section
-        function goToPreviousSection() {
-            currentSectionIndex = (currentSectionIndex - 1 + sectionIds.length) % sectionIds.length; // Loop to the last section before the first
-            showSection(sectionIds[currentSectionIndex]);
-        }
-
-        // Event listener for keydown events to listen for arrow keys and 'A/a', 'D/d'
-        document.addEventListener('keydown', function(event) {
-            // Right arrow key (→) or 'D'/'d' to go to next section
-            if (event.key === 'd' || event.key === 'D' || event.key === 'ArrowRight') {
-                goToNextSection();
-            } 
-            // Left arrow key (←) or 'A'/'a' to go to previous section
-            else if (event.key === 'a' || event.key === 'A' || event.key === 'ArrowLeft') {
-                goToPreviousSection();
-            }
-        });
-
-        // Variables to track touch starting points
-        let startX = 0;
-        let startY = 0;
-
-        // Start touch event
-        document.addEventListener('touchstart', function(event) {
-            startX = event.touches[0].clientX;
-            startY = event.touches[0].clientY;
-        });
-
-        // End touch event
-        document.addEventListener('touchend', function(event) {
-            if (!startX || !startY) {
-                return;
-            }
-
-            let endX = event.changedTouches[0].clientX;
-            let endY = event.changedTouches[0].clientY;
-
-            let diffX = endX - startX;
-            let diffY = endY - startY;
-
-            // Horizontal swipe detection
-            if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) { // 50px threshold for swipe
-                if (diffX > 0) {
-                    goToPreviousSection();
-                } else {
-                    goToNextSection();
-                }
-            }
-
-            // Reset starting positions
-            startX = 0;
-            startY = 0;
-        });
 
         // Initialize with DSP section and load programs
         showSection('DSP');
-        loadPrograms('DSP'); 
+        loadPrograms('DSP');
         loadPrograms('DC');
     </script>
 
