@@ -269,18 +269,305 @@ ylabel('h(n)');
 grid on;                
                 `            },
             {
-                header: "DSP Program Placeholder",
-                question: "DSP Program Question Placeholder",
+                            header: "DSP Program Placeholder",
+                question: "Analyse causal system2",
  code: 
                 `
+% Define the transfer function H(z)
+
+num = [1]; % Numerator coefficients (z)
+den = [1 -0.9]; % Denominator coefficients (z - 0.9)
+
+% Create the transfer function
+H = tf(num, den, -1); % -1 indicates discrete time
+disp('seros and poles Located at')
+[zz,pp] = tf2zp(num,den)
+
+% a) Pole-Zero Plot
+figure;
+pzmap(H);
+title('Pole-Zero Plot of H(z)');
+grid on;
+
+% b) Frequency Response
+omega = linspace(-pi, pi, 1024); % Frequency range
+H_freq = freqz(num, den, omega); % Frequency response
+
+% Magnitude and Phase
+magnitude = abs(H_freq);
+phase = angle(H_freq);
+
+% Plot Magnitude Response
+figure;
+subplot(2, 1, 1);
+plot(omega, magnitude);
+title('Magnitude Response');
+xlabel('frequency in radians');
+ylabel('Magnitude');
+
+% Plot Phase Response
+subplot(2, 1, 2);
+plot(omega, phase);
+title('Phase Response');
+xlabel('frequency in radians');
+ylabel('Phase values');
+
+
+% c) Impulse Response
+n = 0:20; % Time index
+h = (0.9).^n; % Impulse response for n >= 0
+h(1) = 1; % h(0) = 1 for the impulse response
+disp('Samples of impulse response')
+disp(h);
+figure;
+stem(n, h);
+title('Impulse Response h(n)');
+xlabel('n');
+ylabel('Amplitude');
+           
+                `            },
+            {
+                header: "DSP Program Placeholder",
+                question: "dit_radix2_fft",
+ code: 
+                `
+
+% a)This part of the program is for creating “dit_radix2_fft” function 
+%Note:student must type the following code and save as dit_radix2_fft
+
+function X = dit_radix2_fft(x)
+    % DIT Radix-2 FFT Implementation
+    % Input:
+    %   x - Input signal (must be a power of 2 in length)
+    % Output:
+    %   X - FFT of the input signal
+
+    % Check if the length of x is a power of 2
+    N = length(x);
+    if mod(log2(N), 1) ~= 0
+        error('Input length must be a power of 2');
+    end
+
+    % Bit-reverse the input
+    x = bit_reverse(x);
+
+    % Initialize the output
+    X = x;
+
+    % Number of stages
+    stages = log2(N);
+
+    % FFT computation
+    for stage = 1:stages
+        % Number of points in each FFT stage
+        num_points = 2^stage;
+        half_points = num_points / 2;
+
+        % Twiddle factors
+        W = exp(-2 * pi * 1i * (0:half_points-1) / num_points);
+
+        for k = 0:N/num_points-1
+            for j = 0:half_points-1
+                % Indices for the butterfly operation
+                idx1 = k * num_points + j + 1; % MATLAB is 1-indexed
+                idx2 = idx1 + half_points;
+
+                % Butterfly operation
+                temp = X(idx2) * W(j + 1);
+                X(idx2) = X(idx1) - temp;
+                X(idx1) = X(idx1) + temp;
+            end
+        end
+    end
+end
+
+function x_bitreversed = bit_reverse(x)
+    % Bit-reverse the input array
+    N = length(x);
+    n = log2(N);
+    x_bitreversed = zeros(size(x));
+
+    for k = 0:N-1
+        % Bit-reverse the index
+        rev_idx = bin2dec(fliplr(dec2bin(k, n))) + 1; % MATLAB is 1-indexed
+        x_bitreversed(rev_idx) = x(k + 1);
+    end
+end
+
+
+
+% b): Example program to Develop decimation in time radix-2 FFT algorithm 
+
+clc;
+clear all;
+close all;
+N = 4; % Length of the input signal (must be a power of 2)
+x = [1 2 3 4]; % Example input signal
+X = dit_radix2_fft(x); % Compute FFT
+disp('Input Signal:');
+disp(x);
+disp('FFT of the Input Signal:');
+disp(X);
                 
                 `            },
             {
                 header: "DSP Program Placeholder",
-                question: "DSP Program Question Placeholder",
+                question: "digital low pass FIR filter using Rectangular /Bartlett/Hamming/Hanning window",
  code: 
                 `
+  clc;
+clear all;
+close all;
+rp=input('enter the passband ripple');
+rs=input('enter the stopband ripple');
+fp=input('enter the passbandfreq');
+fs=input('enter the stopbandfreq');
+f=input('enter the sampling freq');
+wp=2*fp/f;
+ws=2*fs/f;
+num=-20*log10(sqrt(rp*rs))-13;
+den=14.6*(fs-fp)/f;
+n=ceil(num/den);
+n1=n+1;
+if(rem(n,2)~=0)
+ n1=n;
+ n=n-1;
+end;
+y=boxcar(n1); / y=bartlett(n1); / y=hanning(n1); / y=hamming(n1);
+b=fir1(n,wp,'low',y);
+[h,q]=freqz(b,1,256);
+m=20*log10(abs(h));
+subplot(2,2,1);
+plot(q/pi,m);
+xlabel('normalisedfreq');
+ylabel('gain in dB');
+title('low pass filter using rectangular window');
+system output
+enter the passband ripple=0.02
+enter the stopband ripple=0.01
+enter the passbandfreq=1200
+enter the stopbandfreq=1700
+enter the sampling freq=9000              
+                `            },
+            {
+                header: "DSP Program Placeholder",
+                question: "digital high pass FIR filter using Rectangular /Bartlett/Hamming/Hanning window",
+ code: 
+                `
+clc;
+clearall;
+closeall;
+rp=input('enter the passband ripple');
+rs=input('enter the stopband ripple');
+fp=input('enter the passbandfreq');
+fs=input('enter the stopbandfreq');
+f=input('enter the sampling freq');
+wp=2*fp/f;
+ws=2*fs/f;
+num=-20*log10(sqrt(rp*rs))-13;
+den=14.6*(fs-fp)/f;
+n=ceil(num/den);
+n1=n+1;
+if(rem(n,2)~=0)
+ n1=n;
+ n=n-1;
+end;
+y=boxcar(n1); / y=bartlett(n1); / y=hanning(n1); / y=hamming(n1);
+b=fir1(n,wp,'high',y);
+[h,q]=freqz(b,1,256);
+m=20*log10(abs(h));
+subplot(2,2,2);
+plot(q/pi,m);
+xlabel('normalisedfreq');
+ylabel('gain in dB');
+title('high pass filter using rectangular window');
+system output
+enter the passband ripple=0.02
+enter the stopband ripple=0.01
+enter the passbandfreq=1200
+enter the stopbandfreq=1700
+enter the sampling freq=9000
                 
+                `            },
+            {
+                header: "DSP Program Placeholder",
+                question: "digital IIR Butterworth low pass filter",
+ code: 
+                `
+ clc;
+clear all;
+close all;
+rp=input('enter the pass band ripple=');
+rs=input('enter the stop band ripple=');
+wp=input('enter the pass band frequency=');
+ws=input('enter the stop band frequency=');
+fs=input('enter the sampling frequency=');
+w1=2*wp/fs;
+ w2=2*ws/fs;
+ [n,wn]=buttord(w1,w2,rp,rs);
+ [b,a]=butter(n,wn,'low');
+disp('the order of lpf');
+disp(n);
+disp('the cut off freq of lpf');
+disp(wn);
+w=0:0.01:pi;
+[h]=freqz(b,a,w);
+mag=20*log10(abs(h));
+ang=angle(h);
+subplot(2,1,1);
+plot(w/pi,mag);
+xlabel('normalized freq');
+ylabel('magnitude');
+subplot(2,1,2);
+plot(w/pi,ang);
+xlabel('normalised freq');
+ylabel('angle');
+output:
+enter the pass band ripple=3
+enter the stop band ripple=60
+enter the pass band frequency=150
+enter the stop band frequency=300
+enter the sampling frequency=1500               
+                `            },
+            {
+                header: "DSP Program Placeholder",
+                question: "digital IIR Butterworth high pass filter",
+ code: 
+                `
+clc;
+clear all;
+close all;
+rp=input('enter the pass band ripple=');
+rs=input('enter the stop band ripple=');
+wp=input('enter the pass band frequency=');
+ws=input('enter the stop band frequency=');
+fs=input('enter the sampling frequency=');
+ w1=2*wp/fs;
+ w2=2*ws/fs;
+ [n,wn]=buttord(w1,w2,rp,rs);
+ [b,a]=butter(n,wn,'high');
+disp('the order of hpf');
+disp(n);
+disp('the cut off freq of hpf');
+disp(wn);
+ w=0:0.01:pi;
+ [h]=freqz(b,a,w);
+mag=20*log10(abs(h));
+ang=angle(h);
+subplot(2,1,1);
+plot(w/pi,mag);
+xlabel('normalized freq');
+ylabel('magnitude');
+subplot(2,1,2);
+plot(w/pi,ang);
+xlabel('normalisedfreq');
+ylabel('angle');
+output:
+enter the pass band ripple=3
+enter the stop band ripple=60
+enter the pass band frequency=150
+enter the stop band frequency=300
+enter the sampling frequency=1500                
                 `            },
             // Additional DSP programs can be added here
             /*
