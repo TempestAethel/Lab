@@ -217,10 +217,56 @@ end;
                 `            },
             {
                 header: "DSP Program Placeholder",
-                question: "DSP Program Question Placeholder",
+                question: "Analyse causal system",
  code: 
                 `
-                
+% Define the transfer function H(z)
+syms z;
+H_z = 1 / (1 - 0.9*z^(-1)); % Transfer function in terms of z
+% Display the transfer function
+disp('Transfer function H(z) is:');
+pretty(H_z);
+% Convert to a rational transfer function (polynomial in z)
+H_z_poly = simplify(H_z);
+H_z_poly = collect(H_z_poly, z);
+% Plot the frequency response of H(z)
+f = linspace(-pi, pi, 1000); % Frequency range from -pi to pi
+H_w = @(w) 1 ./ (1 - 0.9 * exp(-1i * w)); % Frequency response H(w)
+% Calculate the magnitude and phase of H(z) over the frequency range
+mag_H = abs(H_w(f)); % Magnitude of the transfer function
+phase_H = angle(H_w(f)); % Phase of the transfer function
+% Plot magnitude and phase response
+figure;
+subplot(2,1,1);
+plot(f, mag_H);
+title('Magnitude Response of H(z)');
+xlabel('Frequency (rad/sample)');
+ylabel('Magnitude');
+subplot(2,1,2);
+plot(f, phase_H);
+title('Phase Response of H(z)');
+xlabel('Frequency (rad/sample)');
+ylabel('Phase (radians)');
+% Plot the pole-zero plot
+figure;
+pzplot(H);
+title('Pole-Zero Plot of H(z)');
+% Define the number of samples
+N = 10; % Number of samples to display (can be adjusted)
+% Define the time index n (0 to N-1)
+n = 0:N-1;
+% Compute the impulse response h(n) = 0.9^n for n >= 0
+h_n = (0.9).^n; % Impulse response
+% Display the impulse response values
+disp('Impulse Response h(n):');
+disp(h_n);
+% Plot the impulse response
+figure;
+stem(n, h_n, 'filled', 'MarkerSize', 6);
+title('Impulse Response h(n) = 0.9^n');
+xlabel('n');
+ylabel('h(n)');
+grid on;                
                 `            },
             {
                 header: "DSP Program Placeholder",
