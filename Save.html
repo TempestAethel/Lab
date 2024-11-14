@@ -10,17 +10,19 @@
             color: #f1f1f1;
             font-family: Arial, sans-serif;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
+            padding: 20px;
         }
         .container {
             background-color: #333;
             padding: 20px;
             border-radius: 8px;
             width: 100%;
-            max-width: 500px;
+            max-width: 600px;
         }
         h1 {
             text-align: center;
@@ -52,8 +54,23 @@
         button:hover {
             background-color: #45a049;
         }
-        .file-link {
-            display: none;
+        #savedContent {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #444;
+            border-radius: 8px;
+            color: #f1f1f1;
+        }
+        h3 {
+            color: #4caf50;
+        }
+        pre {
+            background-color: #333;
+            padding: 15px;
+            border-radius: 5px;
+            color: #f1f1f1;
+            font-size: 14px;
+            overflow-x: auto;
         }
     </style>
 </head>
@@ -70,9 +87,10 @@
         <button id="saveBtn">Save</button>
     </div>
 
-    <div class="container">
-        <h2>Saved Content</h2>
-        <h3 id="savedHeading"></h3>
+    <!-- Saved content section -->
+    <div id="savedContent" style="display: none;">
+        <h3>Saved Content</h3>
+        <h4 id="savedHeading"></h4>
         <pre id="savedCode"></pre>
     </div>
 
@@ -83,8 +101,10 @@
             const savedCode = localStorage.getItem('savedCode');
 
             if (savedHeading && savedCode) {
+                // Display the saved content below the form
                 document.getElementById('savedHeading').innerText = savedHeading;
                 document.getElementById('savedCode').innerText = savedCode;
+                document.getElementById('savedContent').style.display = 'block';
             }
         };
 
@@ -102,9 +122,10 @@
             localStorage.setItem('savedHeading', heading);
             localStorage.setItem('savedCode', code);
 
-            // Display the saved content in the page
+            // Display the saved content below the form
             document.getElementById('savedHeading').innerText = heading;
             document.getElementById('savedCode').innerText = code;
+            document.getElementById('savedContent').style.display = 'block';
         });
     </script>
 
