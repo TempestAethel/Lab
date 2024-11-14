@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Save Code Locally</title>
+    <style>
+        body {
+            background-color: #2e2e2e;
+            color: #f1f1f1;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: #333;
+            padding: 20px;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 500px;
+        }
+        h1 {
+            text-align: center;
+            color: #4caf50;
+        }
+        label {
+            display: block;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border: 1px solid #666;
+            background-color: #444;
+            color: #f1f1f1;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #4caf50;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .file-link {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Save Code</h1>
+        <label for="heading">Heading:</label>
+        <input type="text" id="heading" placeholder="Enter your heading" />
+
+        <label for="code">Code:</label>
+        <textarea id="code" rows="10" placeholder="Enter your code"></textarea>
+
+        <button id="saveBtn">Save</button>
+    </div>
+
+    <div class="container">
+        <h2>Saved Content</h2>
+        <h3 id="savedHeading"></h3>
+        <pre id="savedCode"></pre>
+    </div>
+
+    <script>
+        // Load saved data from localStorage if it exists
+        window.onload = function() {
+            const savedHeading = localStorage.getItem('savedHeading');
+            const savedCode = localStorage.getItem('savedCode');
+
+            if (savedHeading && savedCode) {
+                document.getElementById('savedHeading').innerText = savedHeading;
+                document.getElementById('savedCode').innerText = savedCode;
+            }
+        };
+
+        // Function to save data to localStorage
+        document.getElementById('saveBtn').addEventListener('click', function() {
+            const heading = document.getElementById('heading').value;
+            const code = document.getElementById('code').value;
+
+            if (!heading || !code) {
+                alert('Both heading and code are required!');
+                return;
+            }
+
+            // Save the data to localStorage
+            localStorage.setItem('savedHeading', heading);
+            localStorage.setItem('savedCode', code);
+
+            // Display the saved content in the page
+            document.getElementById('savedHeading').innerText = heading;
+            document.getElementById('savedCode').innerText = code;
+        });
+    </script>
+
+</body>
+</html>
