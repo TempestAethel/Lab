@@ -59,9 +59,183 @@ const programData = {
         DSP: [
             {
                 header: "DSP Program Placeholder",
-                question: "DSP Program Question Placeholder",
-                code: `% DSP Program Code Placeholder`
+                question: "DFT and IDFT Linear  Convolution",
+                code: 
+                `
+clc;
+clear all;
+close all;
+x=input('enter the first input sequence=');
+h=input('enter the second input sequence=');
+l=length(x);
+m=length(h);
+N=max(l,m);
+Xk=fft(x,N);
+Hk=fft(h,N);
+Yk=Xk.*Hk;
+y=ifft(Yk,N);
+disp('circuler convoluted output using DFT and IDFT method');
+disp(y);
+subplot(3,1,1);
+stem(x);
+title('the first sequence');
+xlabel('time');
+ylabel('amplitude');
+subplot(3,1,2);
+stem(h);
+title('the second sequence');
+xlabel('time');
+ylabel('amplitude');
+subplot(3,1,3);
+stem(y);
+title('the circuler convoluted sequence');
+xlabel('time');
+ylabel('amplitude');
+                `
             },
+            {
+                header: "DSP Program Placeholder",
+                question: "DFT and IDFT Circular Convolution",
+ code: 
+                `
+clc;
+clear all;
+close all;
+x=input('enter the first input sequence=');
+h=input('enter the second input sequence=');
+l=length(x);
+m=length(h);
+N=l+m-1;
+Xk=fft(x,N);
+Hk=fft(h,N);
+Yk=Xk.*Hk;
+y=ifft(Yk,N);
+disp('linear convoluted output using DFT and IDFT method');
+disp(y);
+subplot(3,1,1);
+stem(x);
+title('the first sequence');
+xlabel('time');
+ylabel('amplitude');
+subplot(3,1,2);
+stem(h);
+title('the second sequence');
+xlabel('time');
+ylabel('amplitude');
+subplot(3,1,3);
+stem(y);
+title('the linear convoluted sequence');
+xlabel('time');
+ylabel('amplitude');
+
+                
+                `            },
+            {
+                header: "DSP Program Placeholder",
+                question: "Linearity property",
+ code: 
+                `
+clc;
+clear all;
+close all;
+x1=input('enter the first input sequence=');
+x2=input('enter the second input sequence=');
+a1=input('enter the constant a1=');
+a2=input('enter the constant a2=');
+l1=length(x1);
+l2=length(x2);
+N=max(l1,l2);
+x1n=[x1,zeros(1,N-l1)];
+x2n=[x2,zeros(1,N-l2)];
+y=a1*x1n+a2*x2n;
+yk=fft(y,N);
+disp('output sequence y(k) is');
+disp(yk);
+x1k=fft(x1,N);
+x2k=fft(x2,N);
+yv=a1*x1k+a2*x2k;
+if(yk==yv)
+    disp('linearity property is satisfied');
+    else
+      disp('linearity property is not satisfied');  
+end;
+                
+                `            },
+            {
+                header: "DSP Program Placeholder",
+                question: "Circular time shift property",
+ code: 
+                `
+ clc;
+clear all;
+close all;
+x=input('enter the first input sequence=');
+m=input('enter the number of shifts');
+N=length(x);
+Xs=circshift(x,[0,m]);
+y=fft(Xs,N);
+xk=fft(x,N);
+for K=0:N-1
+    w(K+1)=exp((-j*2*pi*K*m)/N);
+end;
+Yv=w.*xk;
+disp(y);
+disp(Yv);
+if(floor(abs(y)))==(floor(abs(Yv)))
+    disp('circular time shift property is satisfied');
+    else
+      disp('circular time shift property is not satisfied');  
+end;
+               
+                `            },
+            {
+                header: "DSP Program Placeholder",
+                question: "Circular frequency shift property",
+ code: 
+                `
+clc;
+clear all;
+close all;
+x=input('enter the first input sequence=');
+l=input('enter the number of shifts');
+N=length(x);
+xk=fft(x,N);
+yv=circshift(xk,[0,l]);
+for n=0:N-1
+    w(n+1)=exp((j*2*pi*n*l)/N);
+end;
+y=w.*x;
+yk=fft(y);
+disp(yk);
+disp(yv);
+if(floor(abs(yk)))==(floor(abs(yv)))
+    disp('circular frequency shift property is satisfied');
+    else
+      disp('circular frequency shift property is not satisfied');  
+end;
+                
+                `            },
+            {
+                header: "DSP Program Placeholder",
+                question: "DSP Program Question Placeholder",
+ code: 
+                `
+                
+                `            },
+            {
+                header: "DSP Program Placeholder",
+                question: "DSP Program Question Placeholder",
+ code: 
+                `
+                
+                `            },
+            {
+                header: "DSP Program Placeholder",
+                question: "DSP Program Question Placeholder",
+ code: 
+                `
+                
+                `            },
             // Additional DSP programs can be added here
             /*
             {
