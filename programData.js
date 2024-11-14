@@ -839,7 +839,73 @@ end
 % Set plot title and axis limits
 title('16-QAM Symbol Mapping')
 axis([-4 4 -4 4])`
-            },        
+            },     
+            {
+                header: "Additional DC Program Placeholder",
+                question: "Baseband signal using rectangular pulse",
+                code: 
+`% Parameters
+N = 1e6;             % Number of bits
+SNR_dB = 0:2:20;     % SNR in dB
+rect_pulse_duration = 1;  % Duration of rectangular pulse (in seconds)
+pulse_amplitude = 1;     % Amplitude of the rectangular pulse
+
+% Generate random bits
+bits = randi([0, 1], 1, N);
+
+% Rectangular pulse shaping
+% Define a rectangular pulse with duration of rect_pulse_duration
+% This pulse will represent a '1' and '0' will be considered as no pulse.
+tx_signal = zeros(1, N * rect_pulse_duration);  % Initialize the transmitted signal
+
+for k = 1:N
+    if bits(k) == 1
+        tx_signal((k-1)*rect_pulse_duration + 1 : k*rect_pulse_duration) = pulse_amplitude;
+    end
+end
+
+% AWGN channel simulation
+ber = zeros(1, length(SNR_dB));  % Store the bit error rate
+
+for idx = 1:length(SNR_dB)
+    % Add AWGN noise to the signal
+    snr_linear = 10^(SNR_dB(idx)/10);  % Convert SNR from dB to linear scale
+    noise_power = pulse_amplitude^2 / (2 * snr_linear);  % Noise power
+    noise = sqrt(noise_power) * randn(1, length(tx_signal));  % Gaussian noise
+    
+    % Receive signal
+    rx_signal = tx_signal + noise;
+    
+    % Matched filtering and decision
+    % Assuming rectangular pulse shaping, integrate over pulse duration
+    received_bits = zeros(1, N);
+    for k = 1:N
+        % Compute the integral over the duration of each bit (rectangular pulse)
+        pulse_start = (k-1)*rect_pulse_duration + 1;
+        pulse_end = k*rect_pulse_duration;
+        
+        % Decide on the received bit based on the signal value
+        if sum(rx_signal(pulse_start:pulse_end)) > 0
+            received_bits(k) = 1;
+        else
+            received_bits(k) = 0;
+        end
+    end
+    
+    % Compute the bit error rate (BER)
+    errors = sum(bits ~= received_bits);  % Count the bit errors
+    ber(idx) = errors / N;  % BER is the ratio of bit errors to total bits
+end
+
+% Plot the BER vs SNR
+figure;
+semilogy(SNR_dB, ber, 'o-', 'LineWidth', 2);
+xlabel('SNR (dB)');
+ylabel('Bit Error Rate (BER)');
+title('BER vs SNR for Rectangular Pulse Shaping in AWGN Channel');
+grid on;
+`
+            },
             // Additional DC programs can be added here
             /*
             {
