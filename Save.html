@@ -60,17 +60,36 @@
             background-color: #444;
             border-radius: 8px;
             color: #f1f1f1;
+            width: 100%;
+            max-width: 600px;
         }
         h3 {
             color: #4caf50;
         }
-        pre {
-            background-color: #333;
-            padding: 15px;
+        .savedItem {
+            background-color: #555;
+            padding: 10px;
+            margin: 5px 0;
             border-radius: 5px;
-            color: #f1f1f1;
-            font-size: 14px;
-            overflow-x: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .deleteBtn {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .deleteBtn:hover {
+            background-color: #d32f2f;
+        }
+        #shareLink {
+            margin-top: 20px;
+            color: #4caf50;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -90,22 +109,15 @@
     <!-- Saved content section -->
     <div id="savedContent" style="display: none;">
         <h3>Saved Content</h3>
-        <h4 id="savedHeading"></h4>
-        <pre id="savedCode"></pre>
+        <div id="savedList"></div>
+        <p id="shareLink">Share Saved Content</p>
     </div>
 
     <script>
         // Load saved data from localStorage if it exists
         window.onload = function() {
-            const savedHeading = localStorage.getItem('savedHeading');
-            const savedCode = localStorage.getItem('savedCode');
-
-            if (savedHeading && savedCode) {
-                // Display the saved content below the form
-                document.getElementById('savedHeading').innerText = savedHeading;
-                document.getElementById('savedCode').innerText = savedCode;
-                document.getElementById('savedContent').style.display = 'block';
-            }
+            const savedData = JSON.parse(localStorage.getItem('savedData')) || [];
+            displaySavedContent(savedData);
         };
 
         // Function to save data to localStorage
@@ -118,14 +130,86 @@
                 return;
             }
 
-            // Save the data to localStorage
-            localStorage.setItem('savedHeading', heading);
-            localStorage.setItem('savedCode', code);
+            // Retrieve saved data from localStorage
+            const savedData = JSON.parse(localStorage.getItem('savedData')) || [];
 
-            // Display the saved content below the form
-            document.getElementById('savedHeading').innerText = heading;
-            document.getElementById('savedCode').innerText = code;
-            document.getElementById('savedContent').style.display = 'block';
+            // Create a new entry
+            const newEntry = {
+                heading: heading,
+                code: code
+            };
+
+            // Add the new entry to the array
+            savedData.push(newEntry);
+
+            // Save the updated array back to localStorage
+            localStorage.setItem('savedData', JSON.stringify(savedData));
+
+            // Clear input fields
+            document.getElementById('heading').value = '';
+            document.getElementById('code').value = '';
+
+            // Display the updated saved content
+            displaySavedContent(savedData);
+        });
+
+        // Function to display saved content
+        function displaySavedContent(savedData) {
+            const savedList = document.getElementById('savedList');
+            savedList.innerHTML = ''; // Clear the list first
+
+            if (savedData.length > 0) {
+                document.getElementById('savedContent').style.display = 'block';
+
+                savedData.forEach((entry, index) => {
+                    const savedItem = document.createElement('div');
+                    savedItem.classList.add('savedItem');
+
+                    const headingText = document.createElement('span');
+                    headingText.textContent = entry.heading;
+
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.textContent = 'Delete';
+                    deleteBtn.classList.add('deleteBtn');
+                    deleteBtn.addEventListener('click', function() {
+                        deleteSavedEntry(index);
+                    });
+
+                    savedItem.appendChild(headingText);
+                    savedItem.appendChild(deleteBtn);
+                    savedList.appendChild(savedItem);
+                });
+            }
+        }
+
+        // Function to delete a saved entry
+        function deleteSavedEntry(index) {
+            const savedData = JSON.parse(localStorage.getItem('savedData')) || [];
+
+            // Remove the entry at the given index
+            savedData.splice(index, 1);
+
+            // Save the updated array back to localStorage
+            localStorage.setItem('savedData', JSON.stringify(savedData));
+
+            // Display the updated saved content
+            displaySavedContent(savedData);
+        }
+
+        // Function to share saved content
+        document.getElementById('shareLink').addEventListener('click', function() {
+            const savedData = JSON.parse(localStorage.getItem('savedData')) || [];
+            const dataString = JSON.stringify(savedData);
+
+            // Create a temporary textarea to copy the data to clipboard
+            const textarea = document.createElement('textarea');
+            textarea.value = dataString;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+
+            alert('Saved content copied to clipboard! You can share it with others.');
         });
     </script>
 
