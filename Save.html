@@ -41,6 +41,10 @@
             background-color: #444;
             color: #f1f1f1;
             border-radius: 4px;
+            box-sizing: border-box;
+        }
+        textarea {
+            resize: vertical;
         }
         button {
             background-color: #4caf50;
@@ -50,6 +54,7 @@
             border-radius: 4px;
             cursor: pointer;
             width: 100%;
+            margin-top: 10px;
         }
         button:hover {
             background-color: #45a049;
@@ -80,16 +85,22 @@
             color: white;
             border: none;
             padding: 5px 10px;
-            border-radius: 5px;
+            border-radius: 50%;
             cursor: pointer;
+            font-size: 14px;
         }
         .deleteBtn:hover {
             background-color: #d32f2f;
         }
-        #shareLink {
-            margin-top: 20px;
+        #shareLink, #shareTxtFile {
+            margin-top: 10px;
+            display: inline-block;
+            margin-right: 20px;
             color: #4caf50;
             cursor: pointer;
+        }
+        #shareLink:hover, #shareTxtFile:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
@@ -97,11 +108,11 @@
 
     <div class="container">
         <h1>Save Code</h1>
-        <label for="heading">Heading:</label>
-        <input type="text" id="heading" placeholder="Enter your heading" />
+        <label for="heading">Header:</label>
+        <input type="text" id="heading" placeholder="Enter your header" />
 
-        <label for="code">Code:</label>
-        <textarea id="code" rows="10" placeholder="Enter your code"></textarea>
+        <label for="code">Program:</label>
+        <textarea id="code" rows="10" placeholder="Enter your program"></textarea>
 
         <button id="saveBtn">Save</button>
     </div>
@@ -111,6 +122,7 @@
         <h3>Saved Content</h3>
         <div id="savedList"></div>
         <p id="shareLink">Share Saved Content</p>
+        <p id="shareTxtFile">Share as txt</p>
     </div>
 
     <script>
@@ -122,11 +134,11 @@
 
         // Function to save data to localStorage
         document.getElementById('saveBtn').addEventListener('click', function() {
-            const heading = document.getElementById('heading').value;
-            const code = document.getElementById('code').value;
+            const header = document.getElementById('heading').value;
+            const program = document.getElementById('code').value;
 
-            if (!heading || !code) {
-                alert('Both heading and code are required!');
+            if (!header || !program) {
+                alert('Both header and program are required!');
                 return;
             }
 
@@ -135,8 +147,8 @@
 
             // Create a new entry
             const newEntry = {
-                heading: heading,
-                code: code
+                header: header,
+                program: program
             };
 
             // Add the new entry to the array
@@ -165,17 +177,17 @@
                     const savedItem = document.createElement('div');
                     savedItem.classList.add('savedItem');
 
-                    const headingText = document.createElement('span');
-                    headingText.textContent = entry.heading;
+                    const headerText = document.createElement('span');
+                    headerText.textContent = entry.header;
 
                     const deleteBtn = document.createElement('button');
-                    deleteBtn.textContent = 'Delete';
+                    deleteBtn.textContent = 'X';
                     deleteBtn.classList.add('deleteBtn');
                     deleteBtn.addEventListener('click', function() {
                         deleteSavedEntry(index);
                     });
 
-                    savedItem.appendChild(headingText);
+                    savedItem.appendChild(headerText);
                     savedItem.appendChild(deleteBtn);
                     savedList.appendChild(savedItem);
                 });
@@ -196,7 +208,7 @@
             displaySavedContent(savedData);
         }
 
-        // Function to share saved content
+        // Function to share saved content as JSON
         document.getElementById('shareLink').addEventListener('click', function() {
             const savedData = JSON.parse(localStorage.getItem('savedData')) || [];
             const dataString = JSON.stringify(savedData);
@@ -210,6 +222,26 @@
             document.body.removeChild(textarea);
 
             alert('Saved content copied to clipboard! You can share it with others.');
+        });
+
+        // Function to share saved content as txt file
+        document.getElementById('shareTxtFile').addEventListener('click', function() {
+            const savedData = JSON.parse(localStorage.getItem('savedData')) || [];
+
+            // Convert saved content to a string (formatted nicely for text file)
+            let dataString = '';
+            savedData.forEach(entry => {
+                dataString += `Header: ${entry.header}\nProgram: ${entry.program}\n\n`;
+            });
+
+            // Create a blob of the data string
+            const blob = new Blob([dataString], { type: 'text/plain' });
+
+            // Create a link element to download the file
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'saved_content.txt';
+            link.click();
         });
     </script>
 
